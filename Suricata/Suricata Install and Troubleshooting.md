@@ -17,7 +17,7 @@ Container Template: Ubuntu 22.04
 
 Guide: https://docs.suricata.io/en/latest/quickstart.html
 
-# Install Previous Version 
+# Install A Previous Version 
 Use the following guide to download Suricata in a lxc container with a small mod to the version command.
 
 Container Template: Ubuntu 22.04
