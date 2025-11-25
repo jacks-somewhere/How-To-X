@@ -26,12 +26,22 @@ Installing Tailscale onto a Proxmox host or in LXC is straightforward and allow 
 - Tailscale Account
 - Proxmox Host with CT
 
-# Create the Container
-Create a container using the “Create CT” in the top left hand conner. For the [container template](https://pve.proxmox.com/wiki/Linux_Container) chose debian-12. Name the container “tailscale” or something similar.
 
-The container needs to be granted access to the correct network resources in order for Tailscale to work. This requires editing the LXC config files on the node.
+# Create the Container via the UI or Node Shell
 
-# In the Node
+### Proxmox UI:
+Create a container using the “Create CT” in the top left hand conner. For the [container template](https://pve.proxmox.com/wiki/Linux_Container) chose these options:  
+
+Template: debian-12.7  
+Unprivileged Container: Yes
+Disk Size: 4 GiB  
+Cores: 1  
+Memory: 512.00 MiB
+
+Then go to the Containers Options and enable "Start on Boot"
+
+
+### Node Shell:
 Check available CT Templates on the install node:
 
 ```
@@ -45,7 +55,12 @@ Create the container:
 pct create <assigned lxc number> local:vztmpl/debian-12-standard_12.7-1_amd64.tar.zst --hostname tailscale --password <lxc password> --rootfs local-lvm:4 --core 1 --unprivileged 1 --net0 name=eth0,bridge=vmbr0,ip=dhcp --onboot 1
 ```
 
-In the node shell, open the containter config file:
+
+# In the Node
+
+The container needs to be granted access to the correct network resources in order for Tailscale to work. This requires editing the LXC config files in the Node's shell.
+
+In the Node Shell, open the containter config file:
 
 ```
 nano /etc/pve/lxc/<lxc number>.conf
@@ -59,6 +74,8 @@ lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
 ```
 
 Save and close the file.
+
+
 
 # In the Container
 Select the Tailscale container and launch it's shell.
@@ -94,6 +111,8 @@ tailscale up
 
 Copy and paste the provided link into your browser to add the container to your account.
 
+
+
 # Access the Node via Tailscale and SSH
 
 Start a terminal on your system.
@@ -109,8 +128,10 @@ Enter your container password
 To access the node from here, run:
 
 ```
-ssh root@\<local proxmox ip\>
+ssh root@<local proxmox ip>
 ```
+
+
 
 # Local Port Fowarding
 To access the Web UI of the Tailscale device you have to setup SSH local port fowarding.
@@ -130,6 +151,8 @@ To connect to the Web UI, in your browser go to:
 http://localhost:8006
 ```
 
+
+
 # Check Tailscale Status
 To check the Tailscale status and connections run:
 
@@ -138,6 +161,8 @@ tailscale status
 ```
 
 This will bring up a list of Tailscale IPs and their connection status.
+
+
 
 # Links and References
 Linux Container: [https://pve.proxmox.com/wiki/Linux_Container](https://tailscale.com/kb/1174/install-debian-bookworm)
@@ -148,6 +173,9 @@ Fix Tailscale ‘failed to connect to local tailscaled’ Error on Proxmox Conta
 [https://selfhostingsanctuary.com/servers-hardware/virtualization-containers/tailscale-failed-to-connect-to-local-tailscaled-error-on-proxmox-containers/](https://selfhostingsanctuary.com/servers-hardware/virtualization-containers/tailscale-failed-to-connect-to-local-tailscaled-error-on-proxmox-containers/)
 
 Tailscale in lxc containers: [https://tailscale.com/kb/1130/lxc-unprivileged](https://tailscale.com/kb/1130/lxc-unprivileged)
+
+
+
 
 # Troubleshooting
 ### Bash: curl: command not found
